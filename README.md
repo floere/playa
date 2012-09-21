@@ -18,5 +18,9 @@ Go go go
 
 Just run ./bin/playa and play!
 
-Manual
-------
+TODO
+----
+
+* properly modularize (decouple view/control)
+* result history
+* display song names
