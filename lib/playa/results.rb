@@ -4,7 +4,8 @@ module Playa
     
     attr_reader :controller,
                 :music,
-                :size
+                :size,
+                :current
     
     def initialize controller, music, ids = []
       @controller = controller

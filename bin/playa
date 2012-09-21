@@ -30,6 +30,12 @@ extend Helpers::Measuring
 
 duration = timed { controller.index }
 puts "#{music.size} songs indexed in #{duration.round(1)}s."
+puts
+puts "Manual:"
+puts "  enter - next song"
+puts "  type / -> then type genre"
+puts "  type . -> then type specific song name"
+puts
 
 Signal.trap 'INT' do
   exit 0
@@ -65,14 +71,13 @@ loop do
     next
   end
   if result == "\e"
-    results.next
     gobble = 2
     next
   end
   
   case result
   when "\r"
-    results.next
+    results.next rescue nil
     next
   when "\x7F"
     query.chop!
@@ -84,7 +89,8 @@ loop do
   #
   query = controller.expand query
   results = controller.filter query
-  info = "(#{results.size})"
+  amount = results.size
+  info = amount.zero? ? "(0, ignoring)" : "(#{results.size})"
   results.play
   sleep 0.1
 end

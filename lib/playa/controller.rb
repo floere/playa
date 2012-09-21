@@ -38,8 +38,8 @@ module Playa
     end
     
     @@expands = {
-      /\// => 'artist:',
-      /\./ => 'title:'
+      /\// => 'genre:', # select a genre
+      /\./ => 'title:'  # choose a specific title
     }
     def expand query
       @@expands.each do |(regexp, replace)|
