@@ -15,10 +15,10 @@ Needed
 Installation
 ------------
 
-brew install id3tool
-git clone git://github.com/floere/playa.git
-cd playa
-./bin/playa
+1. brew install id3tool
+2. git clone git://github.com/floere/playa.git
+3. cd playa
+4. ./bin/playa
 
 Go go go
 --------
