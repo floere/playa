@@ -4,101 +4,12 @@
 # playa [pattern ...]
 #
 require_relative '../lib/playa'
-require 'cod'
 
-music = Playa::Music.new '~/Music/**/**/**/*.mp3'
-music.load
+Playa::Terminal.new.run
 
-include Picky
 
-index = Index.new :playa do
-  key_format :to_sym
-  indexing splits_text_on: /[\s\.\-]/
-  category :title,
-           partial: Partial::Postfix.new(from: 1)
-  category :artist,
-           partial: Partial::Postfix.new(from: 1)
-  category :album,
-           partial: Partial::Postfix.new(from: 1)
-  category :year,
-           partial: Partial::None.new
-  category :genre,
-           partial: Partial::Postfix.new(from: 1)
-end
-controller = Playa::Controller.new music, index
-shortcuts = Playa::Shortcuts.new
 
-extend Helpers::Measuring
 
-duration = timed { controller.index }
-puts "#{music.size} songs indexed in #{duration.round(1)}s."
-puts
-puts "Manual:"
-puts "  enter - next song"
-puts "  type / -> then type genre"
-puts "  type . -> then type specific song name"
-puts
 
-Signal.trap 'INT' do
-  exit 0
-end
 
-# query = ''
-# loop do
-#   query = gets
-#   puts "Searching for #{query = controller.expand query}."
-#   results = controller.filter query
-#   # puts "Found #{results} songs for #{query}."
-#   controller.play
-#   sleep 0.1
-# end
 
-require 'highline/import'
-prompt = '> '
-query = (ARGV.shift || '').dup
-info = ''
-gobble = 0
-
-results = Playa::Results.new controller, music
-terminal = HighLine.new
-
-loop do
-  # \e[1D backspace
-  result = ask "#{HighLine.Style(:erase_line).code}#{prompt}#{query} #{info}" do |q|
-      q.overwrite = true
-      q.echo      = false  # overwrite works best when echo is false.
-      q.character = true   # if this is set to :getc then overwrite does not work
-  end
-  # "#{prompt}#{query} #{info}"
-  
-  # See highline.rb:822
-  #
-  # result = terminal.send :get_character
-  # p result
-  
-  if gobble > 0
-    gobble -= 1
-    next
-  end
-  if result == "\e"
-    gobble = 2
-    next
-  end
-  
-  case result
-  when "\r"
-    controller.next rescue nil
-    next
-  when "\x7F"
-    query.chop!
-  else
-    query << result
-  end
-  
-  query = shortcuts.expand query
-  
-  results = controller.filter query
-  amount = results.size
-  info = amount.zero? ? "(0: ignoring)" : "(#{results.size})"
-  controller.play
-end

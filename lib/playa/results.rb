@@ -2,17 +2,15 @@ module Playa
   
   class Results
     
-    attr_reader :controller,
-                :music,
-                :size,
-                :current
+    attr_reader :music,
+                :size
     
-    def initialize controller, music, ids = []
-      @controller = controller
+    #
+    #
+    def initialize music, ids = []
       @music = music
       @size = ids.size
-      @ids = ids.shuffle.cycle # for now
-      @current = @ids.first.to_s
+      @ids = ids.shuffle.cycle # TODO make more flexible
     end
     
     # Next song.

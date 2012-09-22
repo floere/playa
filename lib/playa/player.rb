@@ -1,20 +1,14 @@
 module Playa
 
-  class Controller
+  class Player
     
-    attr_reader :music, :results
-    
-    def initialize music, index
-      @music, @index = music, index
-      @files = []
-      @results = Results.new self, music
-      
+    def initialize
       at_exit { stop } # clean up
     end
     
     # Start playing.
     #
-    def play
+    def play results
       stop
       @current_pid = fork do
         $0 = 'playa controller'
@@ -34,31 +28,13 @@ module Playa
       end
     end
     
-    #
+    # 
     #
     def next
       Process.kill 'USR1', @current_pid if @current_pid
     end
     
-    # Filter according to the given query.
-    #
-    def filter query
-      # Search.
-      #
-      results = songs.search query, 100000
-      
-      # Convert results.
-      #
-      @results = Results.new self, music, results.ids
-    end
-    
-    # Index the songs.
-    #
-    def index
-      music.each_hash { |id, h| @index.replace_from h }
-    end
-    
-    #
+    # Kill the forked controller.
     #
     def stop
       if @current_pid
@@ -66,12 +42,6 @@ module Playa
         Process.waitall
         @current_pid = nil
       end
-    end
-    
-    # Search interface.
-    #
-    def songs
-      @songs ||= Picky::Search.new @index
     end
     
   end
