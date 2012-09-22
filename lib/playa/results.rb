@@ -18,12 +18,7 @@ module Playa
     # Next song.
     #
     def next
-      @current = music.find @ids.next
-      play
-    end
-    
-    def play
-      controller.play @current unless @current.empty?
+      music.find @ids.next
     end
     
   end

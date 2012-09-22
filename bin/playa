@@ -4,6 +4,7 @@
 # playa [pattern ...]
 #
 require_relative '../lib/playa'
+require 'cod'
 
 music = Playa::Music.new '~/Music/**/**/**/*.mp3'
 music.load
@@ -25,6 +26,7 @@ index = Index.new :playa do
            partial: Partial::Postfix.new(from: 1)
 end
 controller = Playa::Controller.new music, index
+shortcuts = Playa::Shortcuts.new
 
 extend Helpers::Measuring
 
@@ -53,18 +55,26 @@ end
 
 require 'highline/import'
 prompt = '> '
-query = ''
+query = (ARGV.shift || '').dup
 info = ''
 gobble = 0
 
 results = Playa::Results.new controller, music
+terminal = HighLine.new
 
 loop do
-  result = ask "#{prompt}#{query} #{info}" do |q|
+  # \e[1D backspace
+  result = ask "#{HighLine.Style(:erase_line).code}#{prompt}#{query} #{info}" do |q|
       q.overwrite = true
       q.echo      = false  # overwrite works best when echo is false.
       q.character = true   # if this is set to :getc then overwrite does not work
   end
+  # "#{prompt}#{query} #{info}"
+  
+  # See highline.rb:822
+  #
+  # result = terminal.send :get_character
+  # p result
   
   if gobble > 0
     gobble -= 1
@@ -77,7 +87,7 @@ loop do
   
   case result
   when "\r"
-    results.next rescue nil
+    controller.next rescue nil
     next
   when "\x7F"
     query.chop!
@@ -85,12 +95,10 @@ loop do
     query << result
   end
   
-  # TODO expand differently
-  #
-  query = controller.expand query
+  query = shortcuts.expand query
+  
   results = controller.filter query
   amount = results.size
-  info = amount.zero? ? "(0, ignoring)" : "(#{results.size})"
-  results.play
-  sleep 0.1
+  info = amount.zero? ? "(0: ignoring)" : "(#{results.size})"
+  controller.play
 end

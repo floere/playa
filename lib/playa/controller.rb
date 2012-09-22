@@ -2,50 +2,54 @@ module Playa
 
   class Controller
     
-    attr_reader :music
+    attr_reader :music, :results
     
     def initialize music, index
       @music, @index = music, index
       @files = []
-      @current = nil
+      @results = Results.new self, music
+      
+      at_exit { stop } # clean up
     end
     
     # Start playing.
     #
-    def play file
+    def play
       stop
-      return unless file
-      @current_pid = Process.spawn 'afplay', '-v', '0.5', file
-      file
+      @current_pid = fork do
+        $0 = 'playa controller'
+        child_pid = nil
+        Signal.trap 'QUIT' do
+          Process.kill 'KILL', child_pid if child_pid
+          exit 0
+        end
+        Signal.trap 'USR1' do
+          Process.kill 'KILL', child_pid if child_pid
+        end
+        loop do
+          break unless file = results.next
+          child_pid = spawn 'afplay', '-v', '0.5', file
+          Process.waitall
+        end
+      end
+    end
+    
+    #
+    #
+    def next
+      Process.kill 'USR1', @current_pid if @current_pid
     end
     
     # Filter according to the given query.
     #
-    # TODO Run songs from the results of this query.
-    #
     def filter query
-      # # Expand special search characters.
-      # #
-      # query = expand query
-      
       # Search.
       #
       results = songs.search query, 100000
       
       # Convert results.
       #
-      Results.new self, music, results.ids
-    end
-    
-    @@expands = {
-      /\// => 'genre:', # select a genre
-      /\./ => 'title:'  # choose a specific title
-    }
-    def expand query
-      @@expands.each do |(regexp, replace)|
-        query.gsub! regexp, replace
-      end
-      query
+      @results = Results.new self, music, results.ids
     end
     
     # Index the songs.
@@ -54,14 +58,18 @@ module Playa
       music.each_hash { |id, h| @index.replace_from h }
     end
     
+    #
+    #
     def stop
       if @current_pid
-        Process.kill 'KILL', @current_pid
+        Process.kill 'QUIT', @current_pid
         Process.waitall
         @current_pid = nil
       end
     end
     
+    # Search interface.
+    #
     def songs
       @songs ||= Picky::Search.new @index
     end
