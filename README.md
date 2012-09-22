@@ -9,9 +9,16 @@ Needed
 ------
 
 * OSX
-* brew install id3tool
 * (WIP) mp3s in an iTunes compatible location in the ~/Music folder
 * ID3 tags on your songs help tremendously
+
+Installation
+------------
+
+brew install id3tool
+git clone git://github.com/floere/playa.git
+cd playa
+./bin/playa
 
 Go go go
 --------
@@ -21,6 +28,6 @@ Just run ./bin/playa and play!
 TODO
 ----
 
-* properly modularize (decouple view/control)
 * result history
 * display song names
+* more interfaces (web etc.)
