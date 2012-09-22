@@ -9,7 +9,7 @@ Needed
 ------
 
 * OSX
-* mp3s in an iTunes compatible location in the ~/Music folder (~/Music/**/**/**/*.mp3)
+* mp3s in an iTunes compatible location in the ~/Music folder (~/Music/\*\*/\*\*/\*\*/*.mp3)
 * ID3 tags on your songs help tremendously
 
 Installation
@@ -18,7 +18,7 @@ Installation
 1. brew install id3tool
 2. git clone git://github.com/floere/playa.git
 3. cd playa
-4. ./bin/playa "~/optional/pattern/**/**/*.mp3"
+4. ./bin/playa "~/optional/pattern/\*\*/\*\*/*.mp3"
 
 TODO
 ----
