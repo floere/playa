@@ -5,7 +5,8 @@
 #
 require_relative '../lib/playa'
 
-Playa::Terminal.new.run
+location = ARGV.shift || '~/Music/**/**/**/*.mp3'
+Playa::Terminal.new.run location
 
 
 

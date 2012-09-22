@@ -18,12 +18,7 @@ Installation
 1. brew install id3tool
 2. git clone git://github.com/floere/playa.git
 3. cd playa
-4. ./bin/playa
-
-Go go go
---------
-
-Just run ./bin/playa and play!
+4. ./bin/playa "~/optional/pattern/**/**/*.mp3"
 
 TODO
 ----

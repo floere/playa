@@ -2,20 +2,18 @@ module Playa
   
   class Terminal
     
-    attr_reader :shortcuts
+    attr_reader :shortcuts, :location
     
     #
     #
-    def initialize shortcuts = Shortcuts.new
-      @shortcuts = shortcuts
-      
+    def initialize
       Signal.trap('INT') { exit 0 }
     end
         
     # Run the terminal interface.
     #
-    def run
-      music = Playa::Music.new '~/Music/**/**/**/*.mp3'
+    def run location, shortcuts = Shortcuts.new
+      music = Playa::Music.new location
       music.load
 
       search = Playa::Search.new music
