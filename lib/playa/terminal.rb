@@ -20,15 +20,24 @@ module Playa
       player = Playa::Player.new
       shortcuts = Playa::Shortcuts.new
       
+      # Dump the index for testing.
+      #
+      # old_trap = Signal.trap('INT') {}
+      # Signal.trap('INT') { search.dump_index; old_trap.call }
+      
       extend Picky::Helpers::Measuring
       duration = timed { search.index }
       
       puts "#{music.size} songs indexed in #{duration.round(1)}s."
       puts
+      puts search.to_statistics
+      puts
       puts "Manual:"
       puts "  enter - next song"
       puts "  type / -> then type genre"
       puts "  type . -> then type specific song name"
+      puts "Commands:"
+      puts "  index? size?"
       puts
       
       require 'highline/import'
@@ -83,6 +92,15 @@ module Playa
         else
           player.play results
           "(#{results.size})"
+        end
+        
+        # Special queries.
+        #
+        case query
+        when 'index?'
+          puts search.to_full_statistics
+        when 'size?'
+          puts music.size
         end
       end
     end

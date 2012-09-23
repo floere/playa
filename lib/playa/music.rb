@@ -1,3 +1,5 @@
+# encoding: utf-8
+#
 module Playa
   
   class Music
@@ -12,8 +14,17 @@ module Playa
       songs[id.to_s] && id.to_s
     end
     
+    # TODO Potentially could generate huge strings,
+    # making this process larger than necessary.
+    #
     def load
-      @songs = extract_from `id3tool #{pattern}`
+      @songs = extract_from id3
+    end
+    
+    # Loads ID3 tags as a id3tool specific string.
+    #
+    def id3
+      `id3tool #{pattern}`.encode!('UTF-8', 'UTF-8', :invalid => :replace)
     end
     
     def size
