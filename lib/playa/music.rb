@@ -24,7 +24,10 @@ module Playa
     # Loads ID3 tags as a id3tool specific string.
     #
     def id3
-      `id3tool #{pattern}`.encode!('UTF-8', 'UTF-8', :invalid => :replace)
+      `id3tool #{pattern}`.encode! 'UTF-8',
+                                   'UTF-8',
+                                   :invalid => :replace,
+                                   :undef   => :replace
     end
     
     def size
