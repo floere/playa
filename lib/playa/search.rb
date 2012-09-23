@@ -75,10 +75,9 @@ module Playa
     #
     #
     def to_statistics
-      stats = "Statistics (years and genres)"
-      stats << "\n  "
+      stats = "Years   "
       stats << @index[:year].exact.weights.keys.sort.join(' ')
-      stats << "\n  "
+      stats << "\nGenres  "
       stats << @index[:genre].exact.weights.keys.sort.join(' ')
       stats
     end

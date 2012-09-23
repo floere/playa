@@ -29,7 +29,6 @@ module Playa
       duration = timed { search.index }
       
       puts "#{music.size} songs indexed in #{duration.round(1)}s."
-      puts
       puts search.to_statistics
       puts
       puts "Manual:"
