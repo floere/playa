@@ -23,6 +23,14 @@ Installation
 6. cd playa
 7. ./bin/playa '~/optional/pattern/\*\*/\*\*/*.mp3'
 
+(Eventually playa will be a gem)
+
+Collaborators
+-------------
+
+* [Kaspar Schiess](http://github.com/kschiess) (UTF-8 filenames)
+* [Oliver Adams](http://github.com/oadams) (Linux version)
+
 TODO
 ----
 
