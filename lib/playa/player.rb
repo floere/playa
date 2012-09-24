@@ -2,12 +2,25 @@ module Playa
 
   class Player
     
-    attr_reader :repeat_one
+    attr_reader :repeat_one, :player
     
     def initialize
       @repeat_one = false
+      select_player
       
       at_exit { stop } # clean up
+    end
+    
+    @@players = [
+      'afplay',
+      'play'
+    ]
+    def select_player
+      @player = @@players.find do |player|
+        `#{player} -h > /dev/null 2>&1` rescue nil
+        $?.exitstatus == 1
+      end
+      puts "No suitable player found: tried #{@@players.join(', ')}." unless player
     end
     
     # Start playing.
@@ -31,7 +44,7 @@ module Playa
         
         file = results.next || return
         loop do
-          child_pid = spawn 'afplay', '-v', '0.5', file
+          child_pid = spawn self.player, '-v', '0.5', file
           Process.waitall
           file = results.next unless repeat_one
           break unless file
