@@ -66,6 +66,12 @@ module Playa
         h[id] = info
       end
       h
+    rescue ArgumentError => e
+      puts
+      puts "I could not handle your mp3 data: match was: #{match}."
+      puts
+      
+      raise e
     end
     
   end
