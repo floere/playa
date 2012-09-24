@@ -1,5 +1,8 @@
 module Playa
   
+  # Note: This is work in progress.
+  # It's not yet up to my standards. 
+  #
   class Terminal
     
     attr_reader :shortcuts, :location
@@ -42,14 +45,16 @@ module Playa
       
       require 'highline/import'
       prompt = '> '
-      query = (ARGV.shift || '').dup
-      info = ''
+      query = '*'
+      info = '(all)'
       gobble = 0
       
       repeat_one = player.repeat_one
 
-      results = Playa::Results.new music
+      results = Playa::Results.new music, music.songs.keys
       terminal = HighLine.new
+      
+      player.play results
       
       loop do
         result = ask "#{prompt}#{query} #{info}" do |q|
