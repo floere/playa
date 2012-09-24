@@ -18,9 +18,10 @@ Installation
 1. Install Ruby 1.9
 2. Install id3tool (on OSX: brew install id3tool)
 3. Install sox (only on Linux, http://sox.sourceforge.net/)
-4. git clone git://github.com/floere/playa.git
-5. cd playa
-6. ./bin/playa '~/optional/pattern/\*\*/\*\*/*.mp3'
+4. gem install picky highline
+5. git clone git://github.com/floere/playa.git
+6. cd playa
+7. ./bin/playa '~/optional/pattern/\*\*/\*\*/*.mp3'
 
 TODO
 ----
