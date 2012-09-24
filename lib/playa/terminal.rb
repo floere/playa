@@ -34,9 +34,11 @@ module Playa
       puts "#{music.size} songs indexed in #{duration.round(1)}s."
       puts search.to_statistics
       puts
-      puts "Manual:"
-      puts "  *            -> all songs"
+      puts "Keys:"
       puts "  enter        -> next song"
+      puts "  tab          -> toggle repeat one/all"
+      puts "Searches:"
+      puts "  *            -> all songs"
       puts "  /<genre>     -> search only in genre"
       puts "  .<song name> -> search only in song titles"
       puts "Commands:"
@@ -79,7 +81,7 @@ module Playa
         when "\t"
           repeat_one = !repeat_one
           player.toggle_repeat_one
-          info = "(#{repeat_one ? 'repeat this' : 'don\'t repeat'})"
+          info = "(repeat #{repeat_one ? 'this' : 'all'})"
           next
         when "\x7F"
           query.chop!
