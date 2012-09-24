@@ -52,30 +52,22 @@ module Playa
     genre    = "(?:\nGenre:\s*(.+))?"
     @@regexp = /#{filename}#{song}#{artist}#{album}#{note}#{track}#{year}#{genre}/
     def extract_from string
-      match = nil
-      
-      begin
-        h = {}
-        string.scan(@@regexp) do |match|
-          id = match[0]
+      h = {}
+      string.scan(@@regexp) do |match|
+        puts "ID3 tag was empty. Run id3tool <pattern> to find the problematic ID3 tag." && next if match.empty?
         
-          info = { id: id }
-          info[:title]  = match[1] ? match[1].strip : File.basename(id)
-          info[:artist] = match[2].strip if match[2]
-          info[:album]  = match[3].strip if match[3]
-          info[:year]   = match[4].strip if match[4]
-          info[:genre]  = match[5].strip if match[5]
+        id = match[0]
         
-          h[id] = info
-        end
-        h
-      rescue ArgumentError => e
-        puts
-        puts "I could not handle your mp3 data. Match was: #{match.to_a}."
-        puts
-      
-        raise e
+        info = { id: id }
+        info[:title]  = match[1] ? match[1].strip : File.basename(id)
+        info[:artist] = match[2].strip if match[2]
+        info[:album]  = match[3].strip if match[3]
+        info[:year]   = match[4].strip if match[4]
+        info[:genre]  = match[5].strip if match[5]
+        
+        h[id] = info
       end
+      h
     end
     
   end
