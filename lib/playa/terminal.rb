@@ -32,9 +32,10 @@ module Playa
       puts search.to_statistics
       puts
       puts "Manual:"
-      puts "  enter - next song"
-      puts "  type / -> then type genre"
-      puts "  type . -> then type specific song name"
+      puts "  *            -> all songs"
+      puts "  enter        -> next song"
+      puts "  /<genre>     -> search only in genre"
+      puts "  .<song name> -> search only in song titles"
       puts "Commands:"
       puts "  index? size?"
       puts
@@ -84,6 +85,21 @@ module Playa
         #
         results = search.find query
   
+        # Special queries.
+        #
+        case query
+        when '*'
+          player.play Results.new(music, music.songs.keys)
+          info = "(all)"
+          next
+        when 'index?'
+          puts search.to_full_statistics
+          next
+        when 'size?'
+          puts music.size
+          next
+        end
+  
         #
         #
         info = if results.size.zero?
@@ -91,15 +107,6 @@ module Playa
         else
           player.play results
           "(#{results.size})"
-        end
-        
-        # Special queries.
-        #
-        case query
-        when 'index?'
-          puts search.to_full_statistics
-        when 'size?'
-          puts music.size
         end
       end
     end
