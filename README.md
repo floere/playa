@@ -15,10 +15,12 @@ Needed
 Installation
 ------------
 
-1. brew install id3tool
-2. git clone git://github.com/floere/playa.git
-3. cd playa
-4. ./bin/playa "~/optional/pattern/\*\*/\*\*/*.mp3"
+1. Install Ruby 1.9
+2. Install id3tool (on OSX: brew install id3tool)
+3. Install sox (only on Linux, http://sox.sourceforge.net/)
+4. git clone git://github.com/floere/playa.git
+5. cd playa
+6. ./bin/playa '~/optional/pattern/\*\*/\*\*/*.mp3'
 
 TODO
 ----
