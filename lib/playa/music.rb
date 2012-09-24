@@ -68,7 +68,7 @@ module Playa
       h
     rescue ArgumentError => e
       puts
-      puts "I could not handle your mp3 data: match was: #{match}."
+      puts "I could not handle your mp3 data. Match was: #{match.to_a}."
       puts
       
       raise e
