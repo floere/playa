@@ -45,6 +45,8 @@ module Playa
       query = (ARGV.shift || '').dup
       info = ''
       gobble = 0
+      
+      repeat_one = player.repeat_one
 
       results = Playa::Results.new music
       terminal = HighLine.new
@@ -68,6 +70,11 @@ module Playa
         case result
         when "\r"
           player.next rescue nil
+          next
+        when "\t"
+          repeat_one = !repeat_one
+          player.toggle_repeat_one
+          info = "(#{repeat_one ? 'repeat this' : 'don\'t repeat'})"
           next
         when "\x7F"
           query.chop!
