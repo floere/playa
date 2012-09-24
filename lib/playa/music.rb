@@ -59,8 +59,6 @@ module Playa
         string.scan(@@regexp) do |match|
           id = match[0]
         
-          raise ArgumentError.new
-        
           info = { id: id }
           info[:title]  = match[1] ? match[1].strip : File.basename(id)
           info[:artist] = match[2].strip if match[2]
