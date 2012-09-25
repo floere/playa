@@ -14,7 +14,7 @@ module Playa
     # A mapping of players and their success error codes.
     #
     @@players = {
-      # 'afplay' => 1, # Yep. It's 1.
+      'afplay' => 1, # Yep. It's 1.
       'play'   => 0
     }
     def select_player
