@@ -14,7 +14,7 @@ module Playa
     # A mapping of players and their success error codes.
     #
     @@players = {
-      'afplay' => 1, # Yep. It's 1.
+      # 'afplay' => 1, # Yep. It's 1.
       'play' => 0
     }
     def select_player
@@ -46,7 +46,7 @@ module Playa
         
         file = results.next || return
         loop do
-          child_pid = spawn self.player, '-v', '0.5', file
+          child_pid = spawn self.player, '-v', '0.5', file, '> /dev/null 2>&1'
           Process.waitall
           file = results.next unless repeat_one
           break unless file
