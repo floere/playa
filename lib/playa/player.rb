@@ -11,16 +11,18 @@ module Playa
       at_exit { stop } # clean up
     end
     
-    @@players = [
-      'afplay',
-      'play'
-    ]
+    # A mapping of players and their success error codes.
+    #
+    @@players = {
+      'afplay' => 1, # Yep. It's 1.
+      'play' => 0
+    }
     def select_player
-      @player = @@players.find do |player|
+      @player, _ = @@players.find do |(player, success)|
         `#{player} -h > /dev/null 2>&1` rescue nil
-        $?.exitstatus == 1
+        $?.exitstatus == success
       end
-      puts "No suitable player found: tried #{@@players.join(', ')}." unless player
+      puts "No suitable player found: tried #{@@players.keys.join(', ')}." unless player
     end
     
     # Start playing.
