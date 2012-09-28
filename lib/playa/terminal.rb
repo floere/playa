@@ -31,6 +31,11 @@ module Playa
       extend Picky::Helpers::Measuring
       duration = timed { search.index }
       
+      if music.size.zero?
+        puts %Q{Sorry, I could not find any songs using your pattern "#{location}". Exiting.}
+        exit 1
+      end
+      
       puts "#{music.size} songs indexed in #{duration.round(1)}s."
       puts search.to_statistics
       puts
