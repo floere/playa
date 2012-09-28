@@ -27,20 +27,27 @@ module Playa
     # Loads ID3 tags as a id3tool specific string.
     #
     def id3 pattern
-      `id3tool #{pattern}`.encode! 'UTF-8',
-                                   'UTF-8',
-                                   :invalid => :replace,
-                                   :undef   => :replace
+      id3tool(pattern).encode! 'UTF-8',
+                               'UTF-8',
+                               :invalid => :replace,
+                               :undef   => :replace
+    end
+    
+    require 'shellwords'
+    def id3tool pattern
+      `id3tool #{pattern.gsub(/([^A-Za-z0-9_\-.,:\/@\n\*])/, "\\\\\\1")} 2> /dev/null`
     end
     
     def chunked pattern
-      # *head, tail = pattern.partition(/\*+\/\*+/)
-      # p head
-      # head = File.expand_path head.join
-      # Dir[head].each do |prefix|
-      #   p prefix
-      # end
-      yield pattern
+      *head, tail = pattern.partition /\*+\/\*+/
+      if tail.empty?
+        yield pattern
+      else
+        head = File.expand_path head.join
+        Dir[head].each do |prefix|
+          yield File.join(prefix, tail)
+        end
+      end
     end
     
     def size

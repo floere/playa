@@ -2,7 +2,9 @@ module Playa
 
   class Player
     
-    attr_reader :repeat_one, :player
+    attr_reader :repeat_one,
+                :player
+    attr_accessor :next_up
     
     def initialize
       @repeat_one = false
@@ -31,7 +33,13 @@ module Playa
       'afplay' => [],
       'play' => ['-q']
     }
-    def play results
+    def play results = nil
+      # This is horribly complicated.
+      #
+      songs = results || next_up
+      songs && self.next_up = nil
+      songs || return
+      
       stop
       
       @current_pid = fork do
@@ -48,12 +56,12 @@ module Playa
           @repeat_one = !@repeat_one
         end
         
-        file = results.next || return
+        file = songs.next || return
         loop do
           options = @@options[self.player]
           child_pid = spawn self.player, *options, '-v', '0.5', file
           Process.waitall
-          file = results.next unless repeat_one
+          file = songs.next unless repeat_one
           break unless file
         end
       end

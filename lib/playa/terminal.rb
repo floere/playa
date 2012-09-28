@@ -60,14 +60,14 @@ module Playa
       results = Playa::Results.new music, music.songs.keys
       terminal = HighLine.new
       
-      
-      player.play results if autoplay?
+      player.next_up = results
+      player.play if autoplay?
       
       loop do
         result = ask "#{prompt}#{query} #{info}" do |q|
-            q.overwrite = true
-            q.echo      = false  # overwrite works best when echo is false.
-            q.character = true   # if this is set to :getc then overwrite does not work
+          q.overwrite = true
+          q.echo      = false  # overwrite works best when echo is false.
+          q.character = true   # if this is set to :getc then overwrite does not work
         end
   
         if gobble > 0
@@ -81,7 +81,7 @@ module Playa
   
         case result
         when "\r"
-          player.next || player.play(results)
+          player.play || player.next
           next
         when "\t"
           repeat_one = !repeat_one
@@ -108,7 +108,8 @@ module Playa
         #
         case query
         when '*'
-          player.play Results.new(music, music.songs.keys) if autoplay?
+          player.next_up = Results.new(music, music.songs.keys)
+          player.play if autoplay?
           info = "(all)"
           next
         when 'index?'
@@ -124,7 +125,8 @@ module Playa
         info = if results.size.zero?
           "(0: ignoring)"
         else
-          player.play results if autoplay?
+          player.next_up = results
+          player.play if autoplay?
           "(#{results.size})"
         end
       end
