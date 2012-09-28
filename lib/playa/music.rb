@@ -88,6 +88,8 @@ module Playa
         h[id] = info
       end
       h
+    rescue
+      {} # For now, if a pattern results in a problem, return an empty hash.
     end
     
   end
