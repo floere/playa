@@ -3,19 +3,19 @@ module Playa
   # Note: This is work in progress.
   # It's not yet up to my standards. 
   #
-  class Terminal
+  class Terminal < Clamp::Command
     
-    attr_reader :shortcuts, :location
-    
-    #
-    #
-    def initialize
-      Signal.trap('INT') { exit 0 }
-    end
+    parameter "pattern", "a pattern locating your mp3 files"
+    option "--[no-]info", :flag, "information on startup", :default => true
+    option "--[no-]autoplay", :flag, "autoplay after startup or when searching", :default => true
         
     # Run the terminal interface.
     #
-    def run location, shortcuts = Shortcuts.new
+    def execute
+      Signal.trap('INT') { exit 0 }
+      
+      location = pattern || '~/Music/**/**/**/*.mp3'
+      
       music = Playa::Music.new location
       music.load
 
@@ -28,27 +28,28 @@ module Playa
       # old_trap = Signal.trap('INT') {}
       # Signal.trap('INT') { search.dump_index; old_trap.call }
       
-      extend Picky::Helpers::Measuring
-      duration = timed { search.index }
-      
       if music.size.zero?
         puts %Q{Sorry, I could not find any songs using your pattern "#{location}". Exiting.}
         exit 1
       end
       
-      puts "#{music.size} songs indexed in #{duration.round(1)}s."
-      puts search.to_statistics
-      puts
-      puts "Keys:"
-      puts "  enter        -> next song"
-      puts "  tab          -> toggle repeat one/all"
-      puts "Searches:"
-      puts "  *            -> all songs"
-      puts "  /<genre>     -> search only in genre"
-      puts "  .<song name> -> search only in song titles"
-      puts "Commands:"
-      puts "  index? size?"
-      puts
+      if info?
+        extend Picky::Helpers::Measuring
+        duration = timed { search.index }
+        puts "#{music.size} songs indexed in #{duration.round(1)}s."
+        puts search.to_statistics
+        puts
+        puts "Keys:"
+        puts "  enter        -> next song"
+        puts "  tab          -> toggle repeat one/all"
+        puts "Searches:"
+        puts "  *            -> all songs"
+        puts "  /<genre>     -> search only in genre"
+        puts "  .<song name> -> search only in song titles"
+        puts "Commands:"
+        puts "  index? size?"
+        puts
+      end
       
       require 'highline/import'
       prompt = '> '
@@ -61,7 +62,8 @@ module Playa
       results = Playa::Results.new music, music.songs.keys
       terminal = HighLine.new
       
-      player.play results
+      
+      player.play results if autoplay?
       
       loop do
         result = ask "#{prompt}#{query} #{info}" do |q|
@@ -81,7 +83,7 @@ module Playa
   
         case result
         when "\r"
-          player.next rescue nil
+          player.next || player.play(results)
           next
         when "\t"
           repeat_one = !repeat_one
@@ -108,7 +110,7 @@ module Playa
         #
         case query
         when '*'
-          player.play Results.new(music, music.songs.keys)
+          player.play Results.new(music, music.songs.keys) if autoplay?
           info = "(all)"
           next
         when 'index?'
@@ -124,7 +126,7 @@ module Playa
         info = if results.size.zero?
           "(0: ignoring)"
         else
-          player.play results
+          player.play results if autoplay?
           "(#{results.size})"
         end
       end
