@@ -38,8 +38,11 @@ module Playa
       `id3tool #{pattern.gsub(/([^A-Za-z0-9_\-.,:\/@\n\*])/, "\\\\\\1")} 2> /dev/null`
     end
     
+    # TODO Chunk on the first - if fail, chunk on the second and so on.
+    #
+    @@chunk_on = /\*+/
     def chunked pattern
-      *head, tail = pattern.partition /\*+\/\*+/
+      *head, tail = pattern.partition @@chunk_on
       if tail[/\*/]
         head = File.expand_path head.join
         Dir[head].each do |prefix|
