@@ -7,6 +7,7 @@ module Playa
     attr_reader :pattern, :songs
     
     def initialize pattern = '~/Music/**/*.mp3'
+      @songs   = {}
       @pattern = pattern
     end
     
@@ -18,16 +19,28 @@ module Playa
     # making this process larger than necessary.
     #
     def load
-      @songs = extract_from id3
+      chunked pattern do |subpattern|
+        @songs.merge! extract_from(id3 subpattern)
+      end
     end
     
     # Loads ID3 tags as a id3tool specific string.
     #
-    def id3
+    def id3 pattern
       `id3tool #{pattern}`.encode! 'UTF-8',
                                    'UTF-8',
                                    :invalid => :replace,
                                    :undef   => :replace
+    end
+    
+    def chunked pattern
+      # *head, tail = pattern.partition(/\*+\/\*+/)
+      # p head
+      # head = File.expand_path head.join
+      # Dir[head].each do |prefix|
+      #   p prefix
+      # end
+      yield pattern
     end
     
     def size

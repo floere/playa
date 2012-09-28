@@ -5,7 +5,7 @@ module Playa
   #
   class Terminal < Clamp::Command
     
-    parameter "pattern", "a pattern locating your mp3 files"
+    parameter "[pattern]", "a pattern locating your mp3 files", :default => '~/Music/*/*/*/*.mp3'
     option "--[no-]info", :flag, "information on startup", :default => true
     option "--[no-]autoplay", :flag, "autoplay after startup or when searching", :default => true
         
@@ -14,9 +14,7 @@ module Playa
     def execute
       Signal.trap('INT') { exit 0 }
       
-      location = pattern || '~/Music/**/**/**/*.mp3'
-      
-      music = Playa::Music.new location
+      music = Playa::Music.new pattern
       music.load
 
       search = Playa::Search.new music
@@ -29,7 +27,7 @@ module Playa
       # Signal.trap('INT') { search.dump_index; old_trap.call }
       
       if music.size.zero?
-        puts %Q{Sorry, I could not find any songs using your pattern "#{location}". Exiting.}
+        puts %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
         exit 1
       end
       
