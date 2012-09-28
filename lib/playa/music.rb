@@ -40,13 +40,13 @@ module Playa
     
     def chunked pattern
       *head, tail = pattern.partition /\*+\/\*+/
-      if tail.empty?
-        yield pattern
-      else
+      if tail[/\*/]
         head = File.expand_path head.join
         Dir[head].each do |prefix|
           yield File.join(prefix, tail)
         end
+      else
+        yield pattern
       end
     end
     
