@@ -8,7 +8,7 @@ module Playa
     attr_accessor :next_up
     
     def initialize
-      @channel = Cod.bidir_pipe
+      @channel = Cod.bidir_pipe # TODO Really ok here?
       @repeat_one = false
       select_player
       
@@ -44,6 +44,7 @@ module Playa
       
       stop
       
+      @channel = Cod.bidir_pipe
       @current_pid = fork do
         # Some after-forking setup
         #
@@ -91,6 +92,7 @@ module Playa
     def stop
       if @current_pid
         send_child :quit
+        sleep 0.05
         Process.kill 'QUIT', @current_pid
         Process.waitall
         @current_pid = nil
