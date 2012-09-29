@@ -67,7 +67,7 @@ module Playa
         current_song = player.current_song
         if current_song
           song_info = music.songs[current_song]
-          current_song = [song_info[:title] || current_song, song_info[:artist] || song_info[:album]].compact.join(' | ') if song_info
+          current_song = [song_info[:title], song_info[:artist] || song_info[:album]].compact.join(' | ') if song_info
         end
         
         result = ask "#{prompt}#{query} #{info} #{current_song}" do |q|

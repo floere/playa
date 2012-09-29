@@ -66,6 +66,7 @@ module Playa
         end
         
         file = songs.next || return
+        channel.put :song => file
         loop do
           options = @@options[self.player]
           child_pid = spawn self.player, *options, '-v', '0.5', file
