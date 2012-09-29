@@ -65,7 +65,7 @@ module Playa
     # Note: Totally breaking abstraction here with these print statements.
     #
     def load_or_index
-      load rescue index && dump
+      load rescue (index; dump)
     end
     def load
       @index.load

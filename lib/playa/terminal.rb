@@ -69,8 +69,8 @@ module Playa
         
         result = ask "#{prompt}#{query} #{info} #{current_song}" do |q|
           q.overwrite = true
-          q.echo      = false  # overwrite works best when echo is false.
-          q.character = true   # if this is set to :getc then overwrite does not work
+          q.echo      = false # overwrite works best when echo is false.
+          q.character = true  # if this is set to :getc then overwrite does not work
         end
   
         if gobble > 0
