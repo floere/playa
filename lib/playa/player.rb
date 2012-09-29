@@ -3,10 +3,12 @@ module Playa
   class Player
     
     attr_reader :repeat_one,
-                :player
+                :player,
+                :channel
     attr_accessor :next_up
     
     def initialize
+      @channel = Cod.bidir_pipe
       @repeat_one = false
       select_player
       
@@ -43,17 +45,24 @@ module Playa
       stop
       
       @current_pid = fork do
+        # Some after-forking setup
+        #
         $0 = 'playa controller'
         child_pid = nil
-        Signal.trap 'QUIT' do
-          Process.kill 'KILL', child_pid if child_pid
-          exit 0
-        end
+        channel.swap!
+
         Signal.trap 'USR1' do
-          Process.kill 'KILL', child_pid if child_pid
-        end
-        Signal.trap 'USR2' do
-          @repeat_one = !@repeat_one
+          message = channel.get
+          
+          case message
+          when :quit
+            Process.kill 'KILL', child_pid if child_pid
+            exit 0
+          when :next
+            Process.kill 'KILL', child_pid if child_pid
+          when :toggle_repeat
+            @repeat_one = !@repeat_one
+          end
         end
         
         file = songs.next || return
@@ -62,6 +71,7 @@ module Playa
           child_pid = spawn self.player, *options, '-v', '0.5', file
           Process.waitall
           file = songs.next unless repeat_one
+          channel.put :song => file
           break unless file
         end
       end
@@ -70,13 +80,20 @@ module Playa
     # 
     #
     def next
-      Process.kill 'USR1', @current_pid if @current_pid
+      send_child :next
     end
     
     # Kill the forked controller.
     #
     def stop
+      # if @current_pid
+      #   channel.put :quit
+      #   Process.kill 'QUIT', @current_pid
+      #   Process.waitall
+      #   @current_pid = nil
+      # end
       if @current_pid
+        send_child :quit
         Process.kill 'QUIT', @current_pid
         Process.waitall
         @current_pid = nil
@@ -85,8 +102,24 @@ module Playa
     
     #
     #
-    def toggle_repeat_one
-      Process.kill 'USR2', @current_pid if @current_pid
+    def toggle_repeat
+      send_child :toggle_repeat
+    end
+    
+    #
+    #
+    def send_child message
+      if @current_pid
+        channel.put message
+        Process.kill 'USR1', @current_pid
+      end
+    end
+    
+    #
+    #
+    def current_song
+      ready = Cod.select 0.05, channel.r
+      ready && ready.get[:song]
     end
     
   end

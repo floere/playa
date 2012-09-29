@@ -64,7 +64,13 @@ module Playa
       player.play if autoplay?
       
       loop do
-        result = ask "#{prompt}#{query} #{info}" do |q|
+        current_song = player.current_song
+        if current_song
+          song_info = music.songs[current_song]
+          current_song = [song_info[:title] || current_song, song_info[:artist] || song_info[:album]].compact.join(' | ') if song_info
+        end
+        
+        result = ask "#{prompt}#{query} #{info} #{current_song}" do |q|
           q.overwrite = true
           q.echo      = false  # overwrite works best when echo is false.
           q.character = true   # if this is set to :getc then overwrite does not work
@@ -85,7 +91,7 @@ module Playa
           next
         when "\t"
           repeat_one = !repeat_one
-          player.toggle_repeat_one
+          player.toggle_repeat
           info = "(repeat #{repeat_one ? 'this' : 'all'})"
           next
         when "\x7F"

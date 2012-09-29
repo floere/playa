@@ -4,7 +4,8 @@ module Playa
   
   class Music
     
-    attr_reader :pattern, :songs
+    attr_reader :pattern,
+                :songs
     
     def initialize pattern = '~/Music/**/*.mp3'
       @songs   = {}
@@ -57,7 +58,7 @@ module Playa
       @songs.size
     end
     
-    #
+    # Note: Needed as Picky (currently) destroys the original string when indexing.
     #
     def each_hash &block
       @songs.each &block
@@ -82,7 +83,7 @@ module Playa
         id = match[0]
         
         info = { id: id }
-        info[:title]  = match[1] ? match[1].strip : File.basename(id)
+        info[:title]  = match[1] ? match[1].strip : File.basename(id).strip.sub(/\.\w+?$/,'')
         info[:artist] = match[2].strip if match[2]
         info[:album]  = match[3].strip if match[3]
         info[:year]   = match[4].strip if match[4]
