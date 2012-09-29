@@ -86,13 +86,9 @@ module Playa
     
     # Kill the forked controller.
     #
+    # "There can be only one."
+    #
     def stop
-      # if @current_pid
-      #   channel.put :quit
-      #   Process.kill 'QUIT', @current_pid
-      #   Process.waitall
-      #   @current_pid = nil
-      # end
       if @current_pid
         send_child :quit
         Process.kill 'QUIT', @current_pid
