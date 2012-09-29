@@ -47,7 +47,8 @@ module Playa
     def index
       music.each_hash do |id, hash|
         hash = hash.dup
-        hash[:title] = hash[:title].dup # A bit weird, but Picky deletes numbers in titles. TODO change key_format to accept blocks
+        hash[:title]  = hash[:title].dup # A bit weird, but Picky deletes numbers in titles. TODO change key_format to accept blocks
+        hash[:artist] = hash[:artist].dup # A bit weird, but Picky deletes slashes in artists. TODO change key_format to accept blocks
         @index.replace_from hash
       end
     end

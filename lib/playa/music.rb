@@ -83,6 +83,7 @@ module Playa
         id = match[0]
         
         info = { id: id }
+        
         info[:title]  = match[1] ? match[1].strip : File.basename(id).strip.sub(/\.\w+?$/,'')
         info[:artist] = match[2] ? match[2].strip : File.dirname(id)[/[^\/]+\/[^\/]+$/]
         info[:album]  = match[3].strip if match[3]
