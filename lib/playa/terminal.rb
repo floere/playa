@@ -8,6 +8,7 @@ module Playa
     parameter "[pattern]", "a pattern locating your mp3 files", :default => '~/Music/*/*/*/*.mp3'
     option "--[no-]info", :flag, "information on startup", :default => true
     option "--[no-]autoplay", :flag, "autoplay after startup or when searching", :default => true
+    option "--[no-]index", :flag, "forces an indexing run instead of loading", :default => false
         
     # Run the terminal interface.
     #
@@ -21,11 +22,6 @@ module Playa
       player = Playa::Player.new
       shortcuts = Playa::Shortcuts.new
       
-      # Dump the index for testing.
-      #
-      # old_trap = Signal.trap('INT') {}
-      # Signal.trap('INT') { search.dump_index; old_trap.call }
-      
       if music.size.zero?
         puts %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
         exit 1
@@ -33,8 +29,9 @@ module Playa
       
       if info?
         extend Picky::Helpers::Measuring
-        duration = timed { search.index }
-        puts "#{music.size} songs indexed in #{duration.round(1)}s."
+        print "#{music.size} songs "
+        duration = timed { index? ? search.index && search.dump : search.load_or_index }
+        puts " in #{duration.round(1)}s."
         puts search.to_statistics
         puts
         puts "Keys:"

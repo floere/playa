@@ -7,8 +7,10 @@ module Playa
     attr_reader :music
     
     def initialize music
+      Picky.logger = Picky::Loggers::Silent.new
+      
       @music = music
-      @index = Picky::Index.new :music do
+      @index = Picky::Index.new directorify(music.pattern) do
         key_format :to_sym
         category :title,
                  partial: Picky::Partial::Postfix.new(from: 1),
@@ -41,6 +43,12 @@ module Playa
                  }
       end
     end
+    def directorify pattern
+      pattern.gsub(/\*/, 'x')
+             .gsub!(/\~/, '_')
+             .gsub!(/\//, '-')
+             .to_sym
+    end
     
     # Index the songs.
     #
@@ -51,11 +59,19 @@ module Playa
         hash[:artist] = hash[:artist].dup # A bit weird, but Picky deletes slashes in artists. TODO change key_format to accept blocks
         @index.replace_from hash
       end
+      print 'indexed'
     end
     
+    # Note: Totally breaking abstraction here with these print statements.
     #
-    #
-    def dump_index
+    def load_or_index
+      load rescue index && dump
+    end
+    def load
+      @index.load
+      print 'loaded'
+    end
+    def dump
       @index.dump
     end
     
