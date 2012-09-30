@@ -5,9 +5,10 @@ module Playa
     attr_reader :repeat_one,
                 :player,
                 :channel
-    attr_accessor :next_up
+    attr_accessor :next_up, :volume
     
     def initialize
+      @volume = 0.5
       @channel = Cod.bidir_pipe # TODO Really ok here?
       @repeat_one = false
       select_player
@@ -51,6 +52,7 @@ module Playa
         $0 = 'playa controller'
         child_pid = nil
         channel.swap!
+        @current_pid = nil
 
         Signal.trap 'USR1' do
           message = channel.get
@@ -61,6 +63,12 @@ module Playa
             exit 0
           when :next
             Process.kill 'KILL', child_pid if child_pid
+          when :decrease_volume
+            decrease_volume
+            Process.kill 'KILL', child_pid if child_pid
+          when :increase_volume
+            increase_volume
+            Process.kill 'KILL', child_pid if child_pid
           when :toggle_repeat
             @repeat_one = !@repeat_one
           end
@@ -70,7 +78,7 @@ module Playa
         channel.put :song => file
         loop do
           options = @@options[self.player]
-          child_pid = spawn self.player, *options, '-v', '0.5', file
+          child_pid = spawn self.player, *options, '-v', volume.to_s, file
           Process.waitall
           file = songs.next unless repeat_one
           channel.put :song => file
@@ -103,6 +111,20 @@ module Playa
     #
     def toggle_repeat
       send_child :toggle_repeat
+    end
+    
+    #
+    #
+    def decrease_volume
+      @volume -= 0.1 if @volume > 0
+      send_child :decrease_volume
+    end
+    
+    #
+    #
+    def increase_volume
+      @volume += 0.1 if @volume < 5
+      send_child :increase_volume
     end
     
     #

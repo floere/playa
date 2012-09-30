@@ -6,9 +6,12 @@ module Playa
   class Terminal < Clamp::Command
     
     parameter "[pattern]", "a pattern locating your mp3 files", :default => '~/Music/*/*/*/*.mp3'
-    option "--[no-]info", :flag, "information on startup", :default => true
     option "--[no-]autoplay", :flag, "autoplay after startup or when searching", :default => true
     option "--[no-]index", :flag, "forces an indexing run instead of loading", :default => false
+    option "--[no-]info", :flag, "information on startup", :default => true
+    option ["-V", "--volume"], "VOLUME", "player volume", :default => 0.5 do |v|
+      Float v
+    end
     
     def current_song_info player, music
       current_song = player.current_song
@@ -30,6 +33,7 @@ module Playa
 
       search = Playa::Search.new music
       player = Playa::Player.new
+      player.volume = volume
       shortcuts = Playa::Shortcuts.new
       
       if music.size.zero?
@@ -106,12 +110,24 @@ module Playa
           next
         when "\x7F"
           query.chop!
+        when "A" # up arrow
+          if gobble == 1 # almost finished gobbling
+            player.increase_volume
+            gobble = 0
+            next
+          end
+        when "B" # down arrow
+          if gobble == 1 # almost finished gobbling
+            player.decrease_volume
+            gobble = 0
+            next
+          end
         when "D" # left arrow
           if gobble == 1 # almost finished gobbling
             query = driller.exit || query
             gobble = 0
           end
-        when "C"
+        when "C" # right arrow
           if song_info && gobble == 1
             query = driller.drill song_info, query
             gobble = 0
