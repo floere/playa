@@ -7,6 +7,7 @@ module Playa
     
     parameter "[pattern]", "a pattern locating your mp3 files", :default => '~/Music/*/*/*/*.mp3'
     option "--[no-]autoplay", :flag, "autoplay after startup or when searching", :default => true
+    option "--[no-]quick-delete", :flag, "quick deletion of whole words", :default => true
     option "--[no-]index", :flag, "forces an indexing run instead of loading", :default => false
     option "--[no-]info", :flag, "information on startup", :default => true
     option ["-V", "--volume"], "VOLUME", "player volume", :default => 0.5 do |v|
@@ -34,6 +35,7 @@ module Playa
       search = Playa::Search.new music
       player = Playa::Player.new volume
       shortcuts = Playa::Shortcuts.new
+      backspace_pattern = quick_delete? ? /(?:\w+?\:?|.)$/ : /.$/
       
       if music.size.zero?
         Playa.logger.send :warn, %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
@@ -108,7 +110,7 @@ module Playa
           info = "(repeat #{repeat_one ? 'this' : 'all'})"
           next
         when "\x7F"
-          query.chop!
+          query.gsub! backspace_pattern, ''
         when "A" # up arrow
           if gobble == 1 # almost finished gobbling
             player.increase_volume
