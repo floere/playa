@@ -41,6 +41,8 @@ module Playa
     
     # TODO Chunk on the first - if fail, chunk on the second and so on.
     #
+    # Also, extract code into methods.
+    #
     @@chunk_on = /\*+/
     def chunked pattern
       *head, tail = pattern.partition @@chunk_on
@@ -50,7 +52,20 @@ module Playa
           yield File.join(prefix, tail)
         end
       else
-        yield pattern
+        if pattern.include? '*'
+          yield pattern
+        else
+          # Find recursively.
+          #
+          # Note: Sadly quite slow.
+          #
+          require 'find'
+          Find.find(File.expand_path pattern) do |path|
+            if FileTest.directory? path
+              yield File.join(path, '*.mp3') # TODO Currently only works on mp3.
+            end
+          end
+        end
       end
     end
     

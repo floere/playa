@@ -59,7 +59,7 @@ module Playa
         hash[:artist] = hash[:artist].dup # A bit weird, but Picky deletes slashes in artists. TODO change key_format to accept blocks
         @index.replace_from hash
       end
-      print 'indexed'
+      Playa.logger.print 'Indexed songs'
     end
     
     # Note: Totally breaking abstraction here with these print statements.
@@ -69,7 +69,7 @@ module Playa
     end
     def load
       @index.load
-      print 'loaded'
+      Playa.logger.print 'Loaded song index'
     end
     def dump
       @index.dump

@@ -9,42 +9,45 @@ module Playa
     option "--[no-]info", :flag, "information on startup", :default => true
     option "--[no-]autoplay", :flag, "autoplay after startup or when searching", :default => true
     option "--[no-]index", :flag, "forces an indexing run instead of loading", :default => false
-        
+    
     # Run the terminal interface.
     #
     def execute
+      shut_up unless info?
+      
       Signal.trap('INT') { exit 0 }
       
       music = Playa::Music.new pattern
-      music.load
+      
+      extend Picky::Helpers::Measuring
+      duration = timed { music.load }
+      Playa.logger.puts "Loaded #{music.size} songs in #{duration.round(1)}s."
 
       search = Playa::Search.new music
       player = Playa::Player.new
       shortcuts = Playa::Shortcuts.new
       
       if music.size.zero?
-        puts %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
+        Playa.logger.warn %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
         exit 1
       end
       
-      if info?
-        extend Picky::Helpers::Measuring
-        print "#{music.size} songs "
-        duration = timed { index? ? search.index && search.dump : search.load_or_index }
-        puts " in #{duration.round(1)}s."
-        puts search.to_statistics
-        puts
-        puts "Keys:"
-        puts "  enter        -> next song"
-        puts "  tab          -> toggle repeat one/all"
-        puts "Searches:"
-        puts "  *            -> all songs"
-        puts "  /<genre>     -> search only in genre"
-        puts "  .<song name> -> search only in song titles"
-        puts "Commands:"
-        puts "  index? size?"
-        puts
-      end
+      duration = timed { index? ? search.index && search.dump : search.load_or_index }
+      
+      logger = Playa.logger
+      logger.puts " in #{duration.round(1)}s."
+      logger.puts search.to_statistics
+      logger.puts
+      logger.puts "Keys:"
+      logger.puts "  enter        -> next song"
+      logger.puts "  tab          -> toggle repeat one/all"
+      logger.puts "Searches:"
+      logger.puts "  *            -> all songs"
+      logger.puts "  /<genre>     -> search only in genre"
+      logger.puts "  .<song name> -> search only in song titles"
+      logger.puts "Commands:"
+      logger.puts "  index? size?"
+      logger.puts
       
       require 'highline/import'
       prompt = '> '
@@ -133,6 +136,10 @@ module Playa
           "(#{results.size})"
         end
       end
+    end
+    
+    def shut_up
+      Playa.logger = Class.new { def method_missing *args, &block; end }.new
     end
     
   end
