@@ -45,8 +45,8 @@ module Playa
     end
     def directorify pattern
       pattern.gsub(/\*/, 'x')
-             .gsub!(/\~/, '_')
-             .gsub!(/\//, '-')
+             .gsub(/\~/, '_')
+             .gsub(/\//, '-')
              .to_sym
     end
     
