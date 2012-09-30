@@ -32,8 +32,7 @@ module Playa
       Playa.logger.puts "Loaded #{music.size} songs in #{duration.round(1)}s."
 
       search = Playa::Search.new music
-      player = Playa::Player.new
-      player.volume = volume
+      player = Playa::Player.new volume
       shortcuts = Playa::Shortcuts.new
       
       if music.size.zero?

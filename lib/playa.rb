@@ -7,6 +7,9 @@ module Playa
     attr_accessor :logger
   end
 end
+
+# Default output.
+#
 Playa.logger = STDOUT
 
 #

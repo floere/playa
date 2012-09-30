@@ -7,8 +7,8 @@ module Playa
                 :channel
     attr_accessor :next_up, :volume
     
-    def initialize
-      @volume = 0.5
+    def initialize volume = 0.5
+      @volume = volume
       @channel = Cod.bidir_pipe # TODO Really ok here?
       @repeat_one = false
       select_player
@@ -110,6 +110,7 @@ module Playa
     #
     #
     def toggle_repeat
+      # @repeat_one = !@repeat_one
       send_child :toggle_repeat
     end
     
