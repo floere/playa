@@ -90,7 +90,9 @@ module Playa
     # Search interface.
     #
     def songs
-      @songs ||= Picky::Search.new @index
+      @songs ||= Picky::Search.new @index do
+        searching removes_characters: /[^a-z\s\.\*]/i
+      end
     end
     
     #
