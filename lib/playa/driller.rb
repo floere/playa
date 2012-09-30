@@ -12,11 +12,13 @@ module Playa
     
     # Exits and returns the old query.
     #
+    # Default is * (ie. exiting twice will always end up at *).
+    #
     def exit
       query = @query
       @song  = nil
       @query = nil
-      query
+      query || '*'
     end
     
     # Remembers the given query until reset.
