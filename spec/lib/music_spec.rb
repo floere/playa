@@ -63,7 +63,8 @@ TRACKS
       },
       "/Users/hanke/Music/Separate/Three Tree Posse/The Quest/13 E Mittwuchnamittag.mp3" => {
         :id => "/Users/hanke/Music/Separate/Three Tree Posse/The Quest/13 E Mittwuchnamittag.mp3",
-        :title => "13 E Mittwuchnamittag.mp3"
+        :title => "13 E Mittwuchnamittag",
+        :artist => "Three Tree Posse/The Quest"
       }
     }
   end
