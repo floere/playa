@@ -34,7 +34,7 @@ module Playa
     #
     @@options = {
       'afplay' => [],
-      'play' => ['-q']
+      'play' => ['-q', '-t', 'alsa']
     }
     def play results = nil
       # This is horribly complicated.
@@ -78,8 +78,7 @@ module Playa
         channel.put :song => file
         loop do
           options = @@options[self.player]
-          child_pid = spawn self.player, *options, '-v', volume.to_s, file,
-		  '-t', 'alsa'
+          child_pid = spawn self.player, '-v', volume.to_s, file, *options
           Process.waitall
           file = songs.next unless repeat_one
           channel.put :song => file
