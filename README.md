@@ -21,7 +21,7 @@ Installation
 4. gem install picky highline clamp
 5. git clone git://github.com/floere/playa.git
 6. cd playa
-7. ./bin/playa '~/optional/pattern/\*\*/\*\*/*.mp3'
+7. ./bin/playa '~/optional/pattern/\*/\*/*.mp3'
 
 (Eventually playa will be a gem)
 
