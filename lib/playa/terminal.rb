@@ -10,6 +10,11 @@ module Playa
     option "--[no-]autoplay", :flag, "autoplay after startup or when searching", :default => true
     option "--[no-]index", :flag, "forces an indexing run instead of loading", :default => false
     
+    def current_song_info player, music
+      current_song = player.current_song
+      music.songs[current_song] if current_song
+    end
+    
     # Run the terminal interface.
     #
     def execute
@@ -28,7 +33,7 @@ module Playa
       shortcuts = Playa::Shortcuts.new
       
       if music.size.zero?
-        Playa.logger.warn %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
+        Playa.logger.send :warn, %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
         exit 1
       end
       
@@ -53,6 +58,8 @@ module Playa
       prompt = '> '
       query = '*'
       info = '(all)'
+      song_info = nil
+      current_song = nil 
       gobble = 0
       
       repeat_one = player.repeat_one
@@ -60,14 +67,18 @@ module Playa
       results = Playa::Results.new music, music.songs.keys
       terminal = HighLine.new
       
+      driller = Driller.new
+      
       player.next_up = results
       player.play if autoplay?
       
       loop do
-        current_song = player.current_song
-        if current_song
-          song_info = music.songs[current_song]
-          current_song = [song_info[:title], song_info[:artist] || song_info[:album]].compact.join(' | ') if song_info
+        # Ok, I'm tired. How does coding work again? ;)
+        #
+        new_song_info = current_song_info player, music
+        if new_song_info
+          song_info = new_song_info
+          current_song = [song_info[:title], song_info[:artist] || song_info[:album]].compact.join(' | ')
         end
         
         result = ask "#{prompt}#{query} #{info} #{current_song}" do |q|
@@ -76,16 +87,13 @@ module Playa
           q.character = true  # if this is set to :getc then overwrite does not work
         end
   
-        if gobble > 0
-          gobble -= 1
-          next
-        end
-        if result == "\e"
+        case result
+        when "\e" # mark arrows.
           gobble = 2
           next
-        end
-  
-        case result
+        when "["
+          gobble -= 1
+          next
         when "\r"
           player.play || player.next
           next
@@ -96,6 +104,16 @@ module Playa
           next
         when "\x7F"
           query.chop!
+        when "D" # left arrow
+          if gobble == 1 # almost finished gobbling
+            query = driller.exit || query
+            gobble = 0
+          end
+        when "C"
+          if song_info && gobble == 1
+            query = driller.drill song_info, query
+            gobble = 0
+          end
         else
           query << result
         end
