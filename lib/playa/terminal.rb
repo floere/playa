@@ -46,10 +46,12 @@ module Playa
       logger.puts "Keys:"
       logger.puts "  enter        -> next song"
       logger.puts "  tab          -> toggle repeat one/all"
+      logger.puts "  right arrow  -> only play current artist"
+      logger.puts "  left arrow   -> exit from above"
       logger.puts "Searches:"
       logger.puts "  *            -> all songs"
       logger.puts "  /<genre>     -> search only in genre"
-      logger.puts "  .<song name> -> search only in song titles"
+      logger.puts "  \\<song name> -> search only in song titles"
       logger.puts "Commands:"
       logger.puts "  index? size?"
       logger.puts

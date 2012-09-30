@@ -10,7 +10,7 @@ module Playa
     def expands
       @expands ||= {
         '/' => 'genre:', # select a genre
-        '.' => 'title:'  # choose a specific title
+        '\\' => 'title:'  # choose a specific title
       }
     end
     
