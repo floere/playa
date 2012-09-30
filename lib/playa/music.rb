@@ -7,7 +7,7 @@ module Playa
     attr_reader :pattern,
                 :songs
     
-    def initialize pattern = '~/Music/**/*.mp3'
+    def initialize pattern = '~/Music/*/*.mp3'
       @songs   = {}
       @pattern = pattern
     end
@@ -18,6 +18,8 @@ module Playa
     
     # TODO Potentially could generate huge strings,
     # making this process larger than necessary.
+    #
+    # TODO Cache the music files.
     #
     def load
       chunked pattern do |subpattern|
@@ -34,7 +36,6 @@ module Playa
                                :undef   => :replace
     end
     
-    require 'shellwords'
     def id3tool pattern
       `id3tool #{pattern.gsub(/([^A-Za-z0-9_\-.,:\/@\n\*])/, "\\\\\\1")} 2> /dev/null`
     end
