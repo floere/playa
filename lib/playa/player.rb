@@ -11,34 +11,14 @@ module Playa
     
     def initialize volume = 0.5
       @volume = volume
-      @channel = Cod.bidir_pipe # TODO Really ok here?
       @repeat_one = false
-      @player = find_player
+      @player = Players.find
       
       at_exit { stop } # clean up
     end
     
-    # A mapping of players and their success error codes.
-    #
-    @@players = {
-      'afplay' => 1, # Yep. It's 1.
-      'play'   => 0
-    }
-    def find_player
-      player, _ = @@players.find do |(player, success)|
-        `#{player} -h > /dev/null 2>&1` rescue nil
-        $?.exitstatus == success
-      end
-      puts "No suitable player found: tried #{@@players.keys.join(', ')}." unless player
-      player
-    end
-    
     # Start playing (using player specific options).
     #
-    @@options = {
-      'afplay' => [],
-      'play' => ['-q', '-t', 'alsa']
-    }
     def play results = nil
       # This is horribly complicated.
       #
@@ -80,8 +60,8 @@ module Playa
         file = songs.next || return
         channel.put :song => file
         loop do
-          options = @@options[self.player]
-          child_pid = spawn self.player, '-v', volume.to_s, file, *options
+          options = Players.options_for player
+          child_pid = spawn player, '-v', volume.to_s, file, *options
           Process.waitall
           file = songs.next unless repeat_one
           channel.put :song => file

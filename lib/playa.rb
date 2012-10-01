@@ -20,6 +20,7 @@ require_relative 'playa/shortcuts'
 require_relative 'playa/music'
 require_relative 'playa/search'
 require_relative 'playa/results'
+require_relative 'playa/players'
 require_relative 'playa/player'
 
 #

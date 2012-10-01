@@ -26,6 +26,7 @@ module Playa
       
       Signal.trap('INT') { exit 0 }
       
+      player = Playa::Player.new volume
       music = Playa::Music.new pattern
       
       extend Picky::Helpers::Measuring
@@ -33,7 +34,6 @@ module Playa
       Playa.logger.puts "Loaded #{music.size} songs in #{duration.round(1)}s."
 
       search = Playa::Search.new music
-      player = Playa::Player.new volume
       shortcuts = Playa::Shortcuts.new
       backspace_pattern = quick_delete? ? /(?:\s*\w+?\:?|.)$/ : /.$/
       
