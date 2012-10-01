@@ -10,6 +10,7 @@ module Playa
     option "--[no-]quick-delete", :flag, "quick deletion of whole words", :default => true
     option "--[no-]index", :flag, "forces an indexing run instead of loading", :default => false
     option "--[no-]info", :flag, "information on startup", :default => true
+    option "--[no-]newline", :flag, "newline on song change", :default => false
     option ["-V", "--volume"], "VOLUME", "player volume", :default => 0.5 do |v|
       Float v
     end
@@ -91,6 +92,7 @@ module Playa
         
         # history.push query, results
         
+        STDOUT.print "\n" if newline?
         # Delete last line.
         #
         STDOUT.print "\r\e[K"
