@@ -59,7 +59,7 @@ module Playa
         hash[:artist] = hash[:artist].dup # A bit weird, but Picky deletes slashes in artists. TODO change key_format to accept blocks
         @index.replace_from hash
       end
-      Playa.logger.print 'Indexed songs'
+      Playa.debug.print 'Indexed songs'
     end
     
     # Note: Totally breaking abstraction here with these print statements.
@@ -69,7 +69,7 @@ module Playa
     end
     def load
       @index.load
-      Playa.logger.print 'Loaded song index'
+      Playa.debug.print 'Loaded song index'
     end
     def dump
       @index.dump
@@ -98,23 +98,17 @@ module Playa
     #
     #
     def to_statistics
-      stats = "Years   "
+      stats = "\nYears   "
       stats << @index[:year].exact.weights.keys.sort.join(' ')
       stats << "\nGenres  "
       stats << @index[:genre].exact.weights.keys.sort.join(' ')
-      stats
-    end
-    
-    #
-    #
-    def to_full_statistics
-      stats = to_statistics
       stats << "\nSongs\n  "
       stats << @index[:title].exact.weights.keys.sort.join(' ')
       stats << "\nArtists\n  "
       stats << @index[:artist].exact.weights.keys.sort.join(' ')
       stats << "\nAlbums\n  "
       stats << @index[:album].exact.weights.keys.sort.join(' ')
+      stats
     end
     
   end

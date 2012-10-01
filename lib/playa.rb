@@ -5,13 +5,14 @@ require 'highline/system_extensions'
 
 module Playa
   class << self
-    attr_accessor :logger
+    attr_accessor :info, :debug
   end
 end
 
 # Default output.
 #
-Playa.logger = STDOUT
+Playa.info = STDOUT
+Playa.debug = STDOUT
 
 #
 #

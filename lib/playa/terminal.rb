@@ -7,9 +7,10 @@ module Playa
     
     parameter "[pattern]", "a pattern locating your mp3 files", :default => '~/Music/*/*/*/*.mp3'
     option "--[no-]autoplay", :flag, "autoplay after startup or when searching", :default => true
+    option "--[no-]debug", :flag, "debug information on startup", :default => false
     option "--[no-]quick-delete", :flag, "quick deletion of whole words", :default => true
     option "--[no-]index", :flag, "forces an indexing run instead of loading", :default => false
-    option "--[no-]info", :flag, "information on startup", :default => true
+    option "--[no-]info", :flag, "manual on startup", :default => true
     option "--[no-]newline", :flag, "newline on song change", :default => false
     option ["-V", "--volume"], "VOLUME", "player volume", :default => 0.5 do |v|
       Float v
@@ -23,7 +24,9 @@ module Playa
     # Run the terminal interface.
     #
     def execute
-      shut_up unless info?
+      shut_up :info unless info?
+      shut_up :debug unless debug?
+      
       extend HighLine::SystemExtensions
       
       player = Playa::Player.new volume
@@ -31,23 +34,23 @@ module Playa
       
       extend Picky::Helpers::Measuring
       duration = timed { music.load }
-      Playa.logger.puts "Loaded #{music.size} songs in #{duration.round(1)}s."
+      Playa.debug.puts "Loaded #{music.size} songs in #{duration.round(1)}s."
 
       search = Playa::Search.new music
       shortcuts = Playa::Shortcuts.new
       backspace_pattern = quick_delete? ? /(?:\s*\w+?\:?|.)$/ : /.$/
       
       if music.size.zero?
-        Playa.logger.send :warn, %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
+        Playa.info.send :warn, %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
         exit 1
       end
       
       duration = timed { index? ? (search.index; search.dump) : search.load_or_index }
       
-      logger = Playa.logger
+      logger = Playa.debug
       logger.puts " in #{duration.round(1)}s."
-      logger.puts search.to_statistics
       logger.puts
+      logger = Playa.info
       logger.puts "Keys:"
       logger.puts "  enter        -> next song"
       logger.puts "  tab          -> toggle repeat one/all"
@@ -191,10 +194,10 @@ module Playa
           info = "(all)"
           next
         when 'index?'
-          puts search.to_full_statistics
+          plainly { puts search.to_statistics }
           next
         when 'size?'
-          puts music.size
+          plainly { puts "\n"; puts music.size }
           next
         end
   
@@ -212,8 +215,14 @@ module Playa
       restore_mode
     end
     
-    def shut_up
-      Playa.logger = Class.new { def method_missing *args, &block; end }.new
+    def plainly
+      restore_mode
+      yield
+      raw_no_echo_mode
+    end
+    
+    def shut_up type
+      Playa.send :"#{type}=", Class.new { def method_missing *args, &block; end }.new
     end
     
   end
