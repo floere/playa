@@ -1,9 +1,11 @@
 playa
 =====
 
-WORK IN PROGRESS! Awesome command line music player with awesome built-in search and awesomeness!
+WORK IN PROGRESS!
 
-Name will be changed.
+Command line music player.
+
+Small, does what I needed. Fully searchable. Cool shortcuts. Cmd-tab, tell it something, cmd-tab again.
 
 Needed
 ------
