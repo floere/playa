@@ -10,6 +10,7 @@ module Playa
     attr_accessor :next_up, :volume
     
     def initialize volume = 0.5
+      @channel = Cod.bidir_pipe
       @volume = volume
       @repeat_one = false
       @player = Players.find
