@@ -24,6 +24,7 @@ module Playa
     #
     def execute
       shut_up unless info?
+      extend HighLine::SystemExtensions
       
       player = Playa::Player.new volume
       music = Playa::Music.new pattern
@@ -78,7 +79,6 @@ module Playa
       player.next_up = results
       player.play if autoplay?
       
-      extend HighLine::SystemExtensions
       raw_no_echo_mode
       Signal.trap('INT') { restore_mode; exit 0 }
       loop do
