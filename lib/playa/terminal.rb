@@ -41,7 +41,7 @@ module Playa
         exit 1
       end
       
-      duration = timed { index? ? search.index && search.dump : search.load_or_index }
+      duration = timed { index? ? (search.index; search.dump) : search.load_or_index }
       
       logger = Playa.logger
       logger.puts " in #{duration.round(1)}s."
