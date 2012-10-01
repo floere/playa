@@ -93,15 +93,40 @@ module Playa
         # history.push query, results
         
         STDOUT.print "\n" if newline?
-        # Delete last line.
-        #
         STDOUT.print "\r\e[K"
         STDOUT.flush
         
         # Print out the new line.
         #
         STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"
-        result = STDIN.getbyte.chr
+        
+        # Get char.
+        #
+        result = nil
+        loop do
+          # Anybody type anything?
+          #
+          if IO.select [STDIN], [], [], 0.05
+            result = STDIN.getbyte.chr
+            break
+          end
+          
+          # TODO Doubly duplicated code!
+          #
+          
+          # Any new infos from the player to show?
+          #
+          new_song_info = current_song_info player, music
+          if new_song_info
+            song_info = new_song_info
+            current_song = [song_info[:title], song_info[:artist] || song_info[:album]].compact.join(' | ')
+            
+            STDOUT.print "\n" if newline?
+            STDOUT.print "\r\e[K"
+            STDOUT.flush
+            STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"
+          end
+        end
         
         aux = ''
         
