@@ -11,7 +11,6 @@ Needed
 ------
 
 * OSX
-* mp3s in an iTunes compatible location in the ~/Music folder (~/Music/\*\*/\*\*/\*\*/*.mp3)
 * ID3 tags on your songs help tremendously
 
 Installation
@@ -37,5 +36,4 @@ TODO
 ----
 
 * result history
-* display song names
 * more interfaces (web etc.)
