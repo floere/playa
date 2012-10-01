@@ -47,12 +47,6 @@ module Playa
             exit 0
           when :next
             Process.kill 'KILL', child_pid if child_pid
-          when :decrease_volume
-            decrease_volume
-            Process.kill 'KILL', child_pid if child_pid
-          when :increase_volume
-            increase_volume
-            Process.kill 'KILL', child_pid if child_pid
           when :toggle_repeat
             @repeat_one = !@repeat_one
           end
@@ -96,20 +90,6 @@ module Playa
     def toggle_repeat
       # @repeat_one = !@repeat_one
       send_child :toggle_repeat
-    end
-    
-    #
-    #
-    def decrease_volume
-      @volume -= 0.1 if @volume > 0
-      send_child :decrease_volume
-    end
-    
-    #
-    #
-    def increase_volume
-      @volume += 0.1 if @volume < 5
-      send_child :increase_volume
     end
     
     #
