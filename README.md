@@ -10,7 +10,7 @@ Small, does what I needed. Fully searchable. Cool shortcuts. Cmd-tab, tell it so
 Needed
 ------
 
-* OSX
+* OSX 
 * ID3 tags on your songs help tremendously
 
 Installation
@@ -22,7 +22,8 @@ Installation
 4. gem install picky highline clamp cod
 5. git clone git://github.com/floere/playa.git
 6. cd playa
-7. ./bin/playa '~/optional/pattern/\*/\*/*.mp3'
+7a. ./bin/playa '~/optional/pattern/\*/\*/*.mp3'
+7b. ./bin/playa ~/optional/directory/with/mp3s
 
 (Eventually playa will be a gem)
 
