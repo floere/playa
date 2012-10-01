@@ -24,8 +24,6 @@ module Playa
     def execute
       shut_up unless info?
       
-      Signal.trap('INT') { exit 0 }
-      
       player = Playa::Player.new volume
       music = Playa::Music.new pattern
       
@@ -61,10 +59,10 @@ module Playa
       logger.puts "  index? size?"
       logger.puts
       
-      require 'highline/import'
       prompt = '> '
       query = '*'
       info = '(all)'
+      aux  = ''
       song_info = nil
       current_song = nil 
       gobble = 0
@@ -72,7 +70,6 @@ module Playa
       repeat_one = player.repeat_one
 
       results = Playa::Results.new music, music.songs.keys
-      terminal = HighLine.new
       
       driller = Driller.new
       # history = History.new 5
@@ -80,6 +77,9 @@ module Playa
       player.next_up = results
       player.play if autoplay?
       
+      extend HighLine::SystemExtensions
+      raw_no_echo_mode
+      Signal.trap('INT') { restore_mode; exit 0 }
       loop do
         # Ok, I'm tired. How does coding work again? ;)
         #
@@ -91,12 +91,18 @@ module Playa
         
         # history.push query, results
         
-        result = ask "#{prompt}#{query} #{info} #{current_song}" do |q|
-          q.overwrite = true
-          q.echo      = false # overwrite works best when echo is false.
-          q.character = true  # if this is set to :getc then overwrite does not work
-        end
-  
+        # Delete last line.
+        #
+        STDOUT.print "\r\e[K"
+        STDOUT.flush
+        
+        # Print out the new line.
+        #
+        STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"
+        result = STDIN.getbyte.chr
+        
+        aux = ''
+        
         case result
         when "\e" # mark arrows.
           if STDIN.getc == "["
@@ -128,7 +134,7 @@ module Playa
         when "\t"
           repeat_one = !repeat_one
           player.toggle_repeat
-          info = "(repeat #{repeat_one ? 'this' : 'all'})"
+          aux = "(repeat #{repeat_one ? 'this' : 'all'})"
           next
         when "\x7F"
           query.gsub! backspace_pattern, ''
@@ -175,6 +181,8 @@ module Playa
           "(#{results.size})"
         end
       end
+    ensure
+      restore_mode
     end
     
     def shut_up

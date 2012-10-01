@@ -1,6 +1,7 @@
 require 'picky'
 require 'clamp'
 require 'cod'
+require 'highline/system_extensions'
 
 module Playa
   class << self
