@@ -1,5 +1,7 @@
 module Playa
-
+  
+  #
+  #
   class Player
     
     attr_reader :repeat_one,
@@ -11,7 +13,7 @@ module Playa
       @volume = volume
       @channel = Cod.bidir_pipe # TODO Really ok here?
       @repeat_one = false
-      select_player
+      @player = find_player
       
       at_exit { stop } # clean up
     end
@@ -22,12 +24,13 @@ module Playa
       'afplay' => 1, # Yep. It's 1.
       'play'   => 0
     }
-    def select_player
-      @player, _ = @@players.find do |(player, success)|
+    def find_player
+      player, _ = @@players.find do |(player, success)|
         `#{player} -h > /dev/null 2>&1` rescue nil
         $?.exitstatus == success
       end
       puts "No suitable player found: tried #{@@players.keys.join(', ')}." unless player
+      player
     end
     
     # Start playing (using player specific options).

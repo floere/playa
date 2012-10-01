@@ -35,7 +35,7 @@ module Playa
       search = Playa::Search.new music
       player = Playa::Player.new volume
       shortcuts = Playa::Shortcuts.new
-      backspace_pattern = quick_delete? ? /(?:\w+?\:?|.)$/ : /.$/
+      backspace_pattern = quick_delete? ? /(?:\s*\w+?\:?|.)$/ : /.$/
       
       if music.size.zero?
         Playa.logger.send :warn, %Q{Sorry, I could not find any songs using your pattern "#{pattern}". Exiting.}
@@ -75,6 +75,7 @@ module Playa
       terminal = HighLine.new
       
       driller = Driller.new
+      # history = History.new 5
       
       player.next_up = results
       player.play if autoplay?
@@ -88,6 +89,8 @@ module Playa
           current_song = [song_info[:title], song_info[:artist] || song_info[:album]].compact.join(' | ')
         end
         
+        # history.push query, results
+        
         result = ask "#{prompt}#{query} #{info} #{current_song}" do |q|
           q.overwrite = true
           q.echo      = false # overwrite works best when echo is false.
@@ -96,8 +99,26 @@ module Playa
   
         case result
         when "\e" # mark arrows.
-          gobble = 2
-          next
+          if STDIN.getc == "["
+            case STDIN.getc
+            # when "A" # up arrow
+            #   query, results = history.pop
+            #   player.next_up = results
+            #   player.play if autoplay?
+            # when "B" # down arrow
+            #   # TODO Forward in history
+            when "D" # left arrow
+              query = driller.exit || query
+            when "C" # right arrow
+              if song_info
+                query = driller.drill song_info, query
+              end
+            else
+              query << result
+            end
+          else
+            query << result
+          end
         when "["
           gobble -= 1
           next
@@ -111,28 +132,6 @@ module Playa
           next
         when "\x7F"
           query.gsub! backspace_pattern, ''
-        when "A" # up arrow
-          if gobble == 1 # almost finished gobbling
-            player.increase_volume
-            gobble = 0
-            next
-          end
-        when "B" # down arrow
-          if gobble == 1 # almost finished gobbling
-            player.decrease_volume
-            gobble = 0
-            next
-          end
-        when "D" # left arrow
-          if gobble == 1 # almost finished gobbling
-            query = driller.exit || query
-            gobble = 0
-          end
-        when "C" # right arrow
-          if song_info && gobble == 1
-            query = driller.drill song_info, query
-            gobble = 0
-          end
         else
           query << result
         end
@@ -150,6 +149,9 @@ module Playa
         # Special queries.
         #
         case query
+        when ""
+          info = "(enter query)"
+          next
         when '*'
           player.next_up = Results.new(music, music.songs.keys)
           player.play if autoplay?

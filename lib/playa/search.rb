@@ -78,9 +78,9 @@ module Playa
     # Filters according to the given query.
     #
     def find query
-      # Search.
+      # Search. TODO Why is dup necessary?
       #
-      results = songs.search query, 100000 # "all" ids
+      results = songs.search query.dup, 100000 # "all" ids
       
       # Convert results.
       #
@@ -91,7 +91,7 @@ module Playa
     #
     def songs
       @songs ||= Picky::Search.new @index do
-        searching removes_characters: /[^a-z\s\.\*]/i
+        searching removes_characters: /[^a-z\s\.\*\:]/i
       end
     end
     

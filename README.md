@@ -1,7 +1,7 @@
 playa
 =====
 
-Work in progress: Awesome command line music player with awesome built-in search and awesomeness!
+WORK IN PROGRESS! Awesome command line music player with awesome built-in search and awesomeness!
 
 Name will be changed.
 

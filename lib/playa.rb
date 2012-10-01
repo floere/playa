@@ -14,6 +14,7 @@ Playa.logger = STDOUT
 
 #
 #
+require_relative 'playa/history'
 require_relative 'playa/driller'
 require_relative 'playa/shortcuts'
 require_relative 'playa/music'
