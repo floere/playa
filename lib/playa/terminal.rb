@@ -155,7 +155,12 @@ module Playa
                 # Duplicate code. Refactor.
                 #
                 results = search.find query
-                player.next_up = results
+                info = if results.size.zero?
+                  "(0: ignoring)"
+                else
+                  player.next_up = results
+                  "(#{results.size})"
+                end
                 next
               end
             else
