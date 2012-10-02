@@ -78,7 +78,7 @@ module Playa
     def stop
       if @current_pid
         send_child :quit
-        # sleep 0.05
+        sleep 0.05
         Process.kill 'QUIT', @current_pid
         Process.waitall
         @current_pid = nil
