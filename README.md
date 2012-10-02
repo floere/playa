@@ -30,6 +30,7 @@ Installation
 Collaborators
 -------------
 
+* [Eloy Durán](http://github.com/alloy) (Bug)
 * [Kaspar Schiess](http://github.com/kschiess) (UTF-8 filenames)
 * [Oliver Adams](http://github.com/oadams) (Linux version)
 
