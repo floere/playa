@@ -74,6 +74,10 @@ module Playa
       @songs.size
     end
     
+    def empty?
+      @songs.empty?
+    end
+    
     # Note: Needed as Picky (currently) destroys the original string when indexing.
     #
     def each_hash &block

@@ -13,6 +13,10 @@ module Playa
       @ids = ids.shuffle.cycle # TODO make more flexible
     end
     
+    def empty?
+      size.zero?
+    end
+    
     # Next song.
     #
     def next
