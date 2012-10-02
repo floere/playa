@@ -92,7 +92,7 @@ module Playa
         new_song_info = current_song_info player, music
         if new_song_info
           song_info = new_song_info
-          current_song = [song_info[:title], song_info[:artist] || song_info[:album]].compact.join(' | ')
+          current_song = [song_info[:title], song_info[:artist] || song_info[:album]].compact.join(" \033[1;37m|\033[0m ")
         end
         
         # history.push query, results
@@ -103,7 +103,7 @@ module Playa
         
         # Print out the new line.
         #
-        STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"[0..79]
+        STDOUT.print "#{prompt}\x1b[1m#{query}\x1b[0m \033[1;37m#{info}#{aux}\033[0m #{current_song}"[0..119]
         
         # Get char.
         #
@@ -129,7 +129,7 @@ module Playa
             STDOUT.print "\n" if newline?
             STDOUT.print "\r\e[K"
             STDOUT.flush
-            STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"[0..79]
+            STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"[0..119]
           end
         end
         
@@ -151,6 +151,12 @@ module Playa
             when "C" # right arrow
               if song_info
                 query = driller.drill song_info, query
+                
+                # Duplicate code. Refactor.
+                #
+                results = search.find query
+                player.next_up = results
+                next
               end
             else
               query << result
