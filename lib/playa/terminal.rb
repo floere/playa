@@ -103,7 +103,7 @@ module Playa
         
         # Print out the new line.
         #
-        STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"
+        STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"[0..79]
         
         # Get char.
         #
@@ -111,7 +111,7 @@ module Playa
         loop do
           # Anybody type anything?
           #
-          if IO.select [STDIN], [], [], 0.05
+          if IO.select [STDIN], [], [], 0.1
             result = STDIN.getbyte.chr
             break
           end
@@ -129,7 +129,7 @@ module Playa
             STDOUT.print "\n" if newline?
             STDOUT.print "\r\e[K"
             STDOUT.flush
-            STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"
+            STDOUT.print "#{prompt}#{query} #{info}#{aux} #{current_song}"[0..79]
           end
         end
         
