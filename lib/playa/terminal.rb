@@ -131,11 +131,12 @@ module Playa
           end
         end
         
-        aux = ''
+        aux = '' # TODO Rename to once?
         
         case result
-        when "\e" # mark arrows.
-          if STDIN.getc == "["
+        when "\e"
+          case STDIN.getc
+          when "["
             case STDIN.getc
             # when "A" # up arrow
             #   query, results = history.pop
@@ -152,8 +153,6 @@ module Playa
             else
               query << result
             end
-          else
-            query << result
           end
         when "["
           gobble -= 1

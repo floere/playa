@@ -82,6 +82,7 @@ module Playa
         Process.kill 'QUIT', @current_pid
         Process.waitall
         @current_pid = nil
+        true
       end
     end
     
