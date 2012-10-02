@@ -47,9 +47,7 @@ module Playa
       
       duration = timed { index? ? (search.index; search.dump) : search.load_or_index }
       
-      logger = Playa.debug
-      logger.puts " in #{duration.round(1)}s."
-      logger.puts
+      Playa.debug.puts " in #{duration.round(1)}s."
       logger = Playa.info
       logger.puts
       logger.puts "Keys:"
