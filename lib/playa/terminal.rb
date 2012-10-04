@@ -133,8 +133,6 @@ module Playa
           end
         end
         
-        aux = '' # TODO Rename to once?
-        
         case result
         when "\e"
           case STDIN.getc
@@ -176,7 +174,7 @@ module Playa
         when "\t"
           repeat_one = !repeat_one
           player.toggle_repeat
-          aux = "(repeat #{repeat_one ? 'this' : 'all'})"
+          aux = repeat_one ? '(repeat)' : '' # TODO Actually make it repeat (on results change).
           next
         when "\x7F"
           query.gsub! backspace_pattern, ''

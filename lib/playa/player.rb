@@ -89,7 +89,7 @@ module Playa
     #
     #
     def toggle_repeat
-      # @repeat_one = !@repeat_one
+      @repeat_one = !@repeat_one
       send_child :toggle_repeat
     end
     
