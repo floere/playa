@@ -10,7 +10,8 @@ Small, does what I needed. Fully searchable. Cool shortcuts. Cmd-tab, tell it so
 Needed
 ------
 
-* OSX 
+* OSX
+* Picky 4.8+ (see below)
 * ID3 tags on your songs help tremendously
 
 Installation
