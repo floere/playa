@@ -7,6 +7,7 @@ module Playa
     attr_reader :music
     
     def initialize music
+      Picky.root   = File.expand_path '~/.playa'
       Picky.logger = Picky::Loggers::Silent.new
       
       @music = music
