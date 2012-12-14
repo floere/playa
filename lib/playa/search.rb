@@ -78,14 +78,14 @@ module Playa
     
     # Filters according to the given query.
     #
-    def find query
+    def find query, options = {}
       # Search. TODO Why is dup necessary?
       #
       results = songs.search query.dup, 100000 # "all" ids
       
       # Convert results.
       #
-      Results.new music, results.ids
+      Results.new music, results.ids, options
     end
     
     # Search interface.

@@ -12,6 +12,7 @@ module Playa
     option "--[no-]index", :flag, "forces an indexing run instead of loading", :default => false
     option "--[no-]info", :flag, "manual on startup", :default => true
     option "--[no-]newline", :flag, "newline on song change", :default => false
+    option "--[no-]shuffle", :flag, "shuffle songs", :default => true
     option ["-V", "--volume"], "VOLUME", "player volume", :default => 0.5 do |v|
       Float v
     end
@@ -76,7 +77,7 @@ module Playa
       
       repeat_one = player.repeat_one
 
-      results = Playa::Results.new music, music.songs.keys
+      results = Playa::Results.new music, music.songs.keys, :shuffle => shuffle?
       
       driller = Driller.new
       # history = History.new 5
@@ -152,7 +153,7 @@ module Playa
                 
                 # Duplicate code. Refactor.
                 #
-                results = search.find query
+                results = search.find query, :shuffle => shuffle?
                 info = if results.size.zero?
                   "(0: ignoring)"
                 else
@@ -190,7 +191,7 @@ module Playa
   
         #
         #
-        results = search.find query
+        results = search.find query, :shuffle => shuffle?
   
         # Special queries.
         #
@@ -199,7 +200,7 @@ module Playa
           info = "(enter query)"
           next
         when '*'
-          player.next_up = Results.new(music, music.songs.keys)
+          player.next_up = Results.new(music, music.songs.keys, :shuffle => shuffle?)
           player.play if autoplay?
           info = "(all)"
           next

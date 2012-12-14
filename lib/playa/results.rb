@@ -7,10 +7,10 @@ module Playa
     
     #
     #
-    def initialize music, ids = []
+    def initialize music, ids = [], options = {}
       @music = music
       @size = ids.size
-      @ids = ids.shuffle.cycle # TODO make more flexible
+      @ids = options[:shuffle] ? ids.shuffle.cycle : ids.sort.cycle
     end
     
     def empty?
